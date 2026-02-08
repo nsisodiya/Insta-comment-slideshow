@@ -24,16 +24,22 @@
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
   function normalizeText(s) {
-    return String(s || '').replace(/\s+/g, ' ').trim();
+    return String(s || '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   function commentKey(node, fallbackIndex) {
     const text = normalizeText(node.innerText);
-    return text ? `${text.slice(0, 160)}::${text.length}` : `idx::${fallbackIndex}`;
+    return text
+      ? `${text.slice(0, 160)}::${text.length}`
+      : `idx::${fallbackIndex}`;
   }
 
   function snapshotComments() {
-    const nodes = $$(SELECTOR).filter((n) => (n.innerText || '').trim().length > 0);
+    const nodes = $$(SELECTOR).filter(
+      (n) => (n.innerText || '').trim().length > 0
+    );
     return nodes.slice(0, MAX_ITEMS);
   }
 
@@ -49,7 +55,7 @@
       box-sizing: border-box;
       border-radius: 16px;
       padding: 12px;
-      background: rgba(255,255,255,0.06);
+      background: rgba(255,255,255,1);
       border: 1px solid rgba(255,255,255,0.10);
       backdrop-filter: blur(6px);
       color: white;
@@ -67,7 +73,7 @@
   let nodeByKey = new Map();
   let selectedKeys = new Set();
 
-  function ensureFreshSnapshot() {
+  function ensureFreshSnapshot(selectMissing = true) {
     const latest = snapshotComments();
     allNodes = latest;
     nodeByKey.clear();
@@ -77,8 +83,10 @@
     for (const key of selectedKeys) {
       if (nodeByKey.has(key)) nextSelected.add(key);
     }
-    for (const key of nodeByKey.keys()) {
-      if (!nextSelected.has(key)) nextSelected.add(key);
+    if (selectMissing) {
+      for (const key of nodeByKey.keys()) {
+        if (!nextSelected.has(key)) nextSelected.add(key);
+      }
     }
     selectedKeys = nextSelected;
   }
@@ -123,8 +131,10 @@
       cursor: pointer;
       box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     `;
-    button.onmouseenter = () => (button.style.background = 'rgba(255,255,255,0.12)');
-    button.onmouseleave = () => (button.style.background = 'rgba(15,15,20,0.9)');
+    button.onmouseenter = () =>
+      (button.style.background = 'rgba(255,255,255,0.12)');
+    button.onmouseleave = () =>
+      (button.style.background = 'rgba(15,15,20,0.9)');
     return button;
   }
 
@@ -208,8 +218,10 @@
     cursor: pointer;
     font-size: 18px;
   `;
-  settingsClose.onmouseenter = () => (settingsClose.style.background = 'rgba(255,255,255,0.12)');
-  settingsClose.onmouseleave = () => (settingsClose.style.background = 'rgba(255,255,255,0.04)');
+  settingsClose.onmouseenter = () =>
+    (settingsClose.style.background = 'rgba(255,255,255,0.12)');
+  settingsClose.onmouseleave = () =>
+    (settingsClose.style.background = 'rgba(255,255,255,0.04)');
 
   settingsHeader.appendChild(settingsTitle);
   settingsHeader.appendChild(settingsClose);
@@ -228,11 +240,13 @@
   configBlock.style.cssText = 'display:flex; flex-direction:column; gap:12px;';
 
   const configRowLabel = document.createElement('div');
-  configRowLabel.style.cssText = 'display:flex; align-items:center; justify-content:space-between; font-size:12px; color: rgba(255,255,255,0.75);';
+  configRowLabel.style.cssText =
+    'display:flex; align-items:center; justify-content:space-between; font-size:12px; color: rgba(255,255,255,0.75);';
   configRowLabel.innerHTML = 'Slide interval';
 
   const intervalValue = document.createElement('span');
-  intervalValue.style.cssText = 'font-size:13px; font-weight:600; color: white;';
+  intervalValue.style.cssText =
+    'font-size:13px; font-weight:600; color: white;';
   intervalValue.textContent = `${config.interval} ms`;
   configRowLabel.appendChild(intervalValue);
 
@@ -268,7 +282,8 @@
   intervalControl.appendChild(intervalNumber);
 
   const autoPlayRow = document.createElement('div');
-  autoPlayRow.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap: 12px;';
+  autoPlayRow.style.cssText =
+    'display:flex; align-items:center; justify-content:space-between; gap: 12px;';
 
   const autoPlayLabel = document.createElement('div');
   autoPlayLabel.textContent = 'Auto advance';
@@ -288,7 +303,9 @@
 
   function updateAutoPlayToggle() {
     autoPlayToggle.textContent = config.autoPlay ? 'On' : 'Off';
-    autoPlayToggle.style.borderColor = config.autoPlay ? 'rgba(130,255,180,0.7)' : 'rgba(255,255,255,0.25)';
+    autoPlayToggle.style.borderColor = config.autoPlay
+      ? 'rgba(130,255,180,0.7)'
+      : 'rgba(255,255,255,0.25)';
     autoPlayToggle.style.color = config.autoPlay ? '#84ffa5' : 'white';
   }
 
@@ -309,13 +326,16 @@
   configBlock.appendChild(autoPlayRow);
 
   const selectionContainer = document.createElement('div');
-  selectionContainer.style.cssText = 'display:flex; flex-direction:column; gap:8px; flex:1; overflow:hidden;';
+  selectionContainer.style.cssText =
+    'display:flex; flex-direction:column; gap:8px; flex:1; overflow:hidden;';
 
   const selectionActions = document.createElement('div');
-  selectionActions.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:10px;';
+  selectionActions.style.cssText =
+    'display:flex; align-items:center; justify-content:space-between; gap:10px;';
 
   const selectionInfo = document.createElement('div');
-  selectionInfo.style.cssText = 'font-size:13px; color: rgba(255,255,255,0.75);';
+  selectionInfo.style.cssText =
+    'font-size:13px; color: rgba(255,255,255,0.75);';
   selectionInfo.textContent = '0 selected / loading...';
 
   const quickActions = document.createElement('div');
@@ -383,7 +403,10 @@
   document.body.appendChild(settingsPanel);
 
   function updateInterval(ms) {
-    const clamped = Math.max(MIN_INTERVAL, Math.min(MAX_INTERVAL, Number(ms) || DEFAULT_INTERVAL));
+    const clamped = Math.max(
+      MIN_INTERVAL,
+      Math.min(MAX_INTERVAL, Number(ms) || DEFAULT_INTERVAL)
+    );
     config.interval = clamped;
     intervalSlider.value = clamped;
     intervalNumber.value = clamped;
@@ -391,11 +414,15 @@
     if (overlayOpen && playing) setProgress(idx, true);
   }
 
-  intervalSlider.addEventListener('input', () => updateInterval(intervalSlider.value));
-  intervalNumber.addEventListener('change', () => updateInterval(intervalNumber.value));
+  intervalSlider.addEventListener('input', () =>
+    updateInterval(intervalSlider.value)
+  );
+  intervalNumber.addEventListener('change', () =>
+    updateInterval(intervalNumber.value)
+  );
 
-  function rebuildSelectionList() {
-    ensureFreshSnapshot();
+  function rebuildSelectionList({ snapshot = true } = {}) {
+    if (snapshot) ensureFreshSnapshot();
     const filter = (searchInput.value || '').trim().toLowerCase();
     const items = Array.from(nodeByKey.entries()).map(([key, node]) => ({
       key,
@@ -412,7 +439,8 @@
 
     if (!items.length) {
       const empty = document.createElement('div');
-      empty.textContent = 'No comments were found. Make sure the post has loaded more before opening settings again.';
+      empty.textContent =
+        'No comments were found. Make sure the post has loaded more before opening settings again.';
       empty.style.cssText = 'color: rgba(255,255,255,0.6); font-size: 13px;';
       selectionList.appendChild(empty);
       return;
@@ -475,7 +503,7 @@
   selectAllBtn.addEventListener('click', () => {
     ensureFreshSnapshot();
     selectedKeys = new Set(nodeByKey.keys());
-    rebuildSelectionList();
+    rebuildSelectionList({ snapshot: false });
     if (overlayOpen) {
       idx = 0;
       render(0, true);
@@ -484,7 +512,8 @@
 
   selectNoneBtn.addEventListener('click', () => {
     selectedKeys = new Set();
-    rebuildSelectionList();
+    ensureFreshSnapshot(false);
+    rebuildSelectionList({ snapshot: false });
     if (overlayOpen) {
       idx = 0;
       render(0, true);
@@ -622,6 +651,7 @@
     stageInner.style.cssText = `
       width: 100%;
       max-width: 360px;
+      background: rgba(255, 255, 255, 0);
       max-height: 100%;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
@@ -673,8 +703,10 @@
       cursor: pointer;
       user-select: none;
     `;
-    bottomSettingsBtn.onmouseenter = () => (bottomSettingsBtn.style.background = 'rgba(255,255,255,0.14)');
-    bottomSettingsBtn.onmouseleave = () => (bottomSettingsBtn.style.background = 'rgba(255,255,255,0.08)');
+    bottomSettingsBtn.onmouseenter = () =>
+      (bottomSettingsBtn.style.background = 'rgba(255,255,255,0.14)');
+    bottomSettingsBtn.onmouseleave = () =>
+      (bottomSettingsBtn.style.background = 'rgba(255,255,255,0.08)');
     bottomSettingsBtn.addEventListener('click', () => showSettingsPanel(true));
 
     bottom.appendChild(hint);
@@ -698,8 +730,10 @@
     `;
 
     closeBtn.addEventListener('click', hideOverlay);
-    closeBtn.onmouseenter = () => (closeBtn.style.background = 'rgba(255,255,255,0.16)');
-    closeBtn.onmouseleave = () => (closeBtn.style.background = 'rgba(255,255,255,0.08)');
+    closeBtn.onmouseenter = () =>
+      (closeBtn.style.background = 'rgba(255,255,255,0.16)');
+    closeBtn.onmouseleave = () =>
+      (closeBtn.style.background = 'rgba(255,255,255,0.08)');
 
     phone.appendChild(progressWrap);
     phone.appendChild(header);
@@ -810,8 +844,10 @@
   function setProgress(activeIndex, animate) {
     const delay = config.interval;
     bars.forEach(({ fill }, i) => {
-      fill.style.transition = animate && i === activeIndex ? `width ${delay}ms linear` : 'none';
-      fill.style.width = i < activeIndex ? '100%' : i === activeIndex ? '0%' : '0%';
+      fill.style.transition =
+        animate && i === activeIndex ? `width ${delay}ms linear` : 'none';
+      fill.style.width =
+        i < activeIndex ? '100%' : i === activeIndex ? '0%' : '0%';
     });
     const active = bars[activeIndex];
     if (active && animate) {
@@ -834,13 +870,14 @@
         max-width: 360px;
         border-radius: 16px;
         padding: 14px;
-        background: rgba(255,255,255,0.06);
+        background: rgba(255,255,255,1);
         border: 1px solid rgba(255,255,255,0.12);
         color: white;
         font-size: 14px;
         line-height: 1.4;
       `;
-      message.textContent = 'No comments selected. Open settings to choose at least one.';
+      message.textContent =
+        'No comments selected. Open settings to choose at least one.';
       stageInner.appendChild(message);
       stageInner.style.opacity = '1';
       stageInner.style.transform = 'translateY(0)';
